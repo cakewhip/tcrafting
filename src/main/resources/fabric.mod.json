@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "tcrafting",
+  "version": "${version}",
+
+  "name": "TCrafting",
+  "description": "TCrafting adds Terraria-style crafting to Minecraft.",
+  "authors": [
+    "KQP"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/modid/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.kqp.tcrafting.init.TCrafting"
+    ],
+    "client": [
+      "com.kqp.tcrafting.init.TCraftingClient"
+    ]
+  },
+  "mixins": [
+    "tcrafting.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}

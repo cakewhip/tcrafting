@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.kqp.tcrafting.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "accessor.MinecraftServerResourceAccessor",
+    "accessor.ServerPlayerEntityAccessor",
+    "recipe.IngredientHacker",
+    "recipe.KnownTagConverter",
+    "recipe.RecipeManagerSyncer",
+    "recipe.TRecipeManagerInitializer",
+    "screen.PlayerInventoryListener"
+  ],
+  "client": [
+    "client.gui.NavigationTabAdder",
+    "client.recipe.TClientRecipeManagerInitializer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
