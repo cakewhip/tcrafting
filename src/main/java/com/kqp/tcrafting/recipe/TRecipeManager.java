@@ -332,7 +332,7 @@ public class TRecipeManager extends JsonDataLoader {
                         .map(ItemStack::new)
                         .map(ComparableItemStack::new)
                         .collect(Collectors.toSet()),
-                "tcrafting.tag." + id.getPath() + ".tooltip"
+                id.getNamespace() + ".tag." + id.getPath() + ".tooltip"
         );
     }
 
