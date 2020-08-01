@@ -18,6 +18,11 @@
   "tcrafting.recipe_type.loom.tooltip": "Requires a loom",
   "tcrafting.recipe_type.grindstone.tooltip": "Requires a grindstone",
 
+  "tcrafting.recipe_type.smelting.tooltip": "Needs to be smelted",
+  "tcrafting.recipe_type.smoking.tooltip": "Needs to be smoked",
+  "tcrafting.recipe_type.blasting.tooltip": "Needs to be blasted",
+  "tcrafting.recipe_type.campfire_cooking.tooltip": "Needs to be cooked on a campfire",
+
   "tcrafting.tag.wool.tooltip": "Any Wool",
   "tcrafting.tag.planks.tooltip": "Any Plank",
   "tcrafting.tag.stone_bricks.tooltip": "Any Stone Brick",

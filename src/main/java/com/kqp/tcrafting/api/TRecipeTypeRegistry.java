@@ -23,6 +23,9 @@ public class TRecipeTypeRegistry {
     public static final Identifier GRINDSTONE = register(new Identifier("grindstone"));
 
     public static final Identifier SMELTING = register(new Identifier("smelting"));
+    public static final Identifier BLASTING = register(new Identifier("blasting"));
+    public static final Identifier SMOKING = register(new Identifier("smoking"));
+    public static final Identifier CAMPFIRE_COOKING = register(new Identifier("campfire_cooking"));
 
     public static void init() {
     }

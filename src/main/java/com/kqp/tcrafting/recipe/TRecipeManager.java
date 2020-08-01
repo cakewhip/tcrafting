@@ -95,11 +95,11 @@ public class TRecipeManager extends JsonDataLoader {
         Set<TRecipe> output = new HashSet();
 
         DynamicRecipeRegistry.getDynamicRecipes().values().forEach(dynamicRecipe ->
-            output.addAll(dynamicRecipe.getPossibleRecipes(player, availableRecipeTypes, input)
-                    .stream()
-                    .filter(recipe -> availableRecipeTypes.contains(recipe.recipeType))
-                    .filter(recipe -> recipe.matches(input))
-                    .collect(Collectors.toList()))
+                output.addAll(dynamicRecipe.getPossibleRecipes(player, availableRecipeTypes, input)
+                        .stream()
+                        .filter(recipe -> availableRecipeTypes.contains(recipe.recipeType))
+                        .filter(recipe -> recipe.matches(input))
+                        .collect(Collectors.toList()))
         );
 
         output.addAll(recipes.values().parallelStream()
@@ -259,7 +259,13 @@ public class TRecipeManager extends JsonDataLoader {
                 .collect(Collectors.toList());
 
         for (Recipe recipe : recipes) {
-            if (recipe instanceof ShapedRecipe || recipe instanceof ShapelessRecipe || recipe instanceof SmeltingRecipe) {
+            if (recipe instanceof ShapedRecipe
+                    || recipe instanceof ShapelessRecipe
+                    || recipe instanceof SmeltingRecipe
+                    || recipe instanceof StonecuttingRecipe
+                    || recipe instanceof BlastingRecipe
+                    || recipe instanceof SmokingRecipe
+                    || recipe instanceof CampfireCookingRecipe) {
                 List<Ingredient> ingredientList = recipe.getPreviewInputs();
                 HashMap<Reagent, Integer> reagents = new HashMap();
 
@@ -293,6 +299,14 @@ public class TRecipeManager extends JsonDataLoader {
                         }
                     } else if (recipe instanceof SmeltingRecipe) {
                         recipeType = TRecipeTypeRegistry.SMELTING;
+                    } else if (recipe instanceof StonecuttingRecipe) {
+                        recipeType = TRecipeTypeRegistry.STONECUTTER;
+                    } else if (recipe instanceof BlastingRecipe) {
+                        recipeType = TRecipeTypeRegistry.BLASTING;
+                    } else if (recipe instanceof SmokingRecipe) {
+                        recipeType = TRecipeTypeRegistry.SMOKING;
+                    } else if (recipe instanceof CampfireCookingRecipe) {
+                        recipeType = TRecipeTypeRegistry.CAMPFIRE_COOKING;
                     } else {
                         throw new IllegalStateException("Couldn't determine TCrafting recipe type for vanilla recipe: " + recipe);
                     }
