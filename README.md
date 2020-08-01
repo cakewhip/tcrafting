@@ -1,5 +1,7 @@
 # TCrafting
 
+![Image of added crafting screen](https://i.imgur.com/QQZt5ZS.png)
+
 ## Overview
 The main class is the ``TRecipeManager``. It holds a ``Map<Identifier, TRecipe>``, where ``TRecipe`` is the base class for recipes. In ``TRecipe`` are:
 * ``recipeType``: Recipe type determines how the recipe will be exposed to the player. A lot of vanilla blocks have been registered as recipe types, but note that recipe types will not always correlate with blocks.
