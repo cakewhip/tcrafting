@@ -4,9 +4,11 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Lazy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Represents a TCrafting recipe with an ItemStack result and a map of reagents to their counts.
@@ -15,6 +17,8 @@ public class TRecipe {
     public Identifier recipeType;
     public ItemStack result;
     public HashMap<Reagent, Integer> reagents;
+
+    public Lazy<Integer> cachedHash = new Lazy(() -> Objects.hash(recipeType, new ComparableItemStack(result), reagents));
 
     /**
      * A pre-calculated map of what item stacks match with a given reagent.
@@ -33,6 +37,22 @@ public class TRecipe {
         this.result = result;
         this.reagents = reagents;
 
+        calcItemStackReagentMap();
+    }
+
+    public TRecipe(Identifier recipeType, ItemStack result, ItemStack... inputs) {
+        this(recipeType);
+
+        this.result = result;
+
+        for (ItemStack itemStack : inputs) {
+            reagents.put(new Reagent(itemStack), itemStack.getCount());
+        }
+
+        calcItemStackReagentMap();
+    }
+
+    private void calcItemStackReagentMap() {
         reagents.keySet().forEach(reagent -> {
             reagent.matchingStacks.forEach(matchingStack -> {
                 itemStackReagentMap.put(matchingStack, reagent);
@@ -156,5 +176,20 @@ public class TRecipe {
 
     public String getSortString() {
         return result.getTranslationKey();
+    }
+
+    @Override
+    public int hashCode() {
+        return cachedHash.get();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TRecipe tRecipe = (TRecipe) o;
+        return recipeType.equals(tRecipe.recipeType) &&
+                new ComparableItemStack(result).equals(new ComparableItemStack(tRecipe.result)) &&
+                reagents.equals(tRecipe.reagents);
     }
 }

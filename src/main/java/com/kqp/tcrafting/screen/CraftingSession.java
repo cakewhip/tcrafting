@@ -68,12 +68,18 @@ public class CraftingSession {
         if (!isClient) {
             Set<TRecipe> oldRecipes = new HashSet(craftingRecipes);
             Set<TRecipe> calculatedRecipes = tRecipeManager.getMatches(
+                    player,
                     getAvailableRecipeTypes(),
                     playerInventory.main
             );
+            // gold : 426566901
+            // 15 diamond: -1551094191
 
-            Sets.difference(calculatedRecipes, oldRecipes)
+            // 5 diamond: 1117099102
+
+            calculatedRecipes
                     .stream()
+                    .filter(recipe -> !oldRecipes.contains(recipe))
                     .sorted(Comparator.comparing(TRecipe::getSortString))
                     .forEach(craftingRecipes::add);
 
@@ -114,7 +120,7 @@ public class CraftingSession {
     }
 
     /**
-     * Gathers the valid recipe types given the player's proximity to blocks implementing {@link RecipeAccessProvider}.
+     * Gathers the valid recipe types given the player's proximity to blocks that are registered in {@link TRecipeInterfaceRegistry}.
      * Also gives recipes for the vanilla crafting table, furnace, and anvil.
      * <p>
      * TODO: un-hardcode this and make the blocks implement the interface

@@ -1,17 +1,18 @@
 package com.kqp.tcrafting.recipe;
 
 import com.google.gson.*;
+import com.kqp.tcrafting.api.DynamicRecipeRegistry;
 import com.kqp.tcrafting.api.TRecipeTypeRegistry;
 import com.kqp.tcrafting.init.TCrafting;
 import com.kqp.tcrafting.mixin.accessor.MinecraftServerResourceAccessor;
 import com.kqp.tcrafting.recipe.data.ComparableItemStack;
 import com.kqp.tcrafting.recipe.data.Reagent;
 import com.kqp.tcrafting.recipe.data.TRecipe;
-import com.kqp.tcrafting.recipe.dynamic.DynamicTRecipe;
 import com.kqp.tcrafting.recipe.interf.MatchingStackProvider;
 import com.kqp.tcrafting.recipe.interf.TRecipeManagerContainer;
 import com.kqp.tcrafting.util.TimeUtil;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -37,8 +38,6 @@ public class TRecipeManager extends JsonDataLoader {
      * Map of recipe types ({@link RecipeType}) to a list of recipes.
      */
     private Map<Identifier, TRecipe> recipes = new HashMap();
-
-    private Map<Identifier, DynamicTRecipe> dynamicRecipes = new HashMap();
 
     private final Optional<RecipeManager> vanillaRecipeManager;
 
@@ -66,10 +65,6 @@ public class TRecipeManager extends JsonDataLoader {
         recipes.put(identifier, recipe);
     }
 
-    public void addDynamicRecipe(Identifier identifier, DynamicTRecipe recipe) {
-        dynamicRecipes.put(identifier, recipe);
-    }
-
     /**
      * Returns a list of recipes for a given recipe type.
      *
@@ -91,20 +86,24 @@ public class TRecipeManager extends JsonDataLoader {
     /**
      * Returns a list of recipes that a passed list of item stacks can craft.
      *
-     * @param recipeTypeSet Recipe types to access
-     * @param itemStacks  Input item stacks
+     * @param availableRecipeTypes Recipe types to access
+     * @param itemStacks           Input item stacks
      * @return List of possible recipes
      */
-    public Set<TRecipe> getMatches(Set<Identifier> recipeTypeSet, List<ItemStack> itemStacks) {
+    public Set<TRecipe> getMatches(PlayerEntity player, Set<Identifier> availableRecipeTypes, List<ItemStack> itemStacks) {
         HashMap<ComparableItemStack, Integer> input = TRecipeManager.toComparableMap(itemStacks);
         Set<TRecipe> output = new HashSet();
 
-        dynamicRecipes.forEach((key, dynamicRecipe) -> {
-            output.addAll(dynamicRecipe.getPossibleRecipes(input));
-        });
+        DynamicRecipeRegistry.getDynamicRecipes().values().forEach(dynamicRecipe ->
+            output.addAll(dynamicRecipe.getPossibleRecipes(player, availableRecipeTypes, input)
+                    .stream()
+                    .filter(recipe -> availableRecipeTypes.contains(recipe.recipeType))
+                    .filter(recipe -> recipe.matches(input))
+                    .collect(Collectors.toList()))
+        );
 
         output.addAll(recipes.values().parallelStream()
-                .filter(recipe -> recipeTypeSet.contains(recipe.recipeType))
+                .filter(recipe -> availableRecipeTypes.contains(recipe.recipeType))
                 .filter(recipe -> recipe.matches(input))
                 .collect(Collectors.toList())
         );
