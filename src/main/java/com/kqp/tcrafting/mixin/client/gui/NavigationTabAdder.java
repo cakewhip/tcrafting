@@ -41,7 +41,7 @@ public abstract class NavigationTabAdder extends AbstractInventoryScreen<PlayerS
 
             if (aX > 29 && aX < 57) {
                 if (aY > -32 && aY < 0) {
-                    TCraftingClient.triggerOpenCraftingMenu();
+                    TCraftingClient.triggerOpenCraftingMenu(true);
 
                     callbackInfo.setReturnValue(true);
                 }

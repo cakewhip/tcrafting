@@ -1,7 +1,9 @@
 package com.kqp.tcrafting.network.screen.navigation;
 
 import com.kqp.tcrafting.network.base.BasePacketC2S;
+import com.kqp.tcrafting.network.init.TCraftingNetwork;
 import com.kqp.tcrafting.screen.TCraftingScreenHandler;
+import com.kqp.tcrafting.util.MouseUtil;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,8 +20,23 @@ public class OpenCraftingC2S extends BasePacketC2S {
         super("open_crafting_c2s");
     }
 
+    public void send(boolean moveMouse) {
+        super.sendToServer(buf -> {
+            buf.writeBoolean(moveMouse);
+
+            if (moveMouse) {
+                buf.writeDouble(MouseUtil.getMouseX());
+                buf.writeDouble(MouseUtil.getMouseY());
+            }
+        });
+    }
+
     @Override
     public void accept(PacketContext context, PacketByteBuf data) {
+        boolean moveMouse = data.readBoolean();
+        double mouseX = moveMouse ? data.readDouble() : 0D;
+        double mouseY = moveMouse ? data.readDouble() : 0D;
+
         context.getTaskQueue().execute(() -> {
             ServerPlayerEntity player = (ServerPlayerEntity) context.getPlayer();
             player.openHandledScreen(new ExtendedScreenHandlerFactory() {
@@ -39,6 +56,10 @@ public class OpenCraftingC2S extends BasePacketC2S {
                     return new TCraftingScreenHandler(syncId, inv, ScreenHandlerContext.create(player.world, player.getBlockPos()));
                 }
             });
+
+            if (moveMouse) {
+                TCraftingNetwork.MOVE_MOUSE_S2C.sendToPlayer(player, mouseX, mouseY);
+            }
         });
     }
 }

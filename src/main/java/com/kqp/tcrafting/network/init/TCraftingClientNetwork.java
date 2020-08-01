@@ -9,6 +9,7 @@ public class TCraftingClientNetwork {
         register(TCraftingNetwork.SYNC_CRAFTING_SESSION_S2C);
         register(TCraftingNetwork.REQUEST_SCROLL_POSITION_S2C);
         register(TCraftingNetwork.SYNC_RECIPE_SLOT_S2C);
+        register(TCraftingNetwork.MOVE_MOUSE_S2C);
     }
 
     private static void register(BasePacketS2C packet) {

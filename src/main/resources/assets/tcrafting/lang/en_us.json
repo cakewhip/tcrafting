@@ -1,4 +1,6 @@
 {
+  "tcrafting.key.open_crafting_screen": "Open Crafting Screen",
+
   "gui.tcrafting.crafting": "Crafting",
   "gui.tcrafting.tcrafting_recipe_look_up": "Usages",
 

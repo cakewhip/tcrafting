@@ -1,6 +1,7 @@
 package com.kqp.tcrafting.client.screen;
 
 import com.kqp.tcrafting.init.TCrafting;
+import com.kqp.tcrafting.init.TCraftingClient;
 import com.kqp.tcrafting.network.init.TCraftingNetwork;
 import com.kqp.tcrafting.recipe.data.Reagent;
 import com.kqp.tcrafting.recipe.data.TRecipe;
@@ -269,6 +270,17 @@ public class TCraftingScreen extends HandledScreen<TCraftingScreenHandler> {
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (TCraftingClient.OPEN_CRAFTING_SCREEN_KEY_BIND.matchesKey(keyCode, scanCode)) {
+            this.client.player.closeHandledScreen();
+
+            return true;
+        }
+
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     private boolean hasOutputsScrollbar() {
