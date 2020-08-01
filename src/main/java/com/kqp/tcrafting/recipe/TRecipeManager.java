@@ -1,11 +1,11 @@
 package com.kqp.tcrafting.recipe;
 
 import com.google.gson.*;
+import com.kqp.tcrafting.api.TRecipeTypeRegistry;
 import com.kqp.tcrafting.init.TCrafting;
 import com.kqp.tcrafting.mixin.accessor.MinecraftServerResourceAccessor;
 import com.kqp.tcrafting.recipe.data.ComparableItemStack;
 import com.kqp.tcrafting.recipe.data.Reagent;
-import com.kqp.tcrafting.recipe.data.RecipeType;
 import com.kqp.tcrafting.recipe.data.TRecipe;
 import com.kqp.tcrafting.recipe.dynamic.DynamicTRecipe;
 import com.kqp.tcrafting.recipe.interf.MatchingStackProvider;
@@ -18,9 +18,7 @@ import net.minecraft.item.Items;
 import net.minecraft.recipe.*;
 import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
-import net.minecraft.tag.TagContainer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.Registry;
@@ -54,12 +52,12 @@ public class TRecipeManager extends JsonDataLoader {
      * @param vanillaRecipeManager
      */
     public TRecipeManager(RecipeManager vanillaRecipeManager) {
-        super(GSON, "tCrafting_recipes");
+        super(GSON, "tcrafting_recipes");
 
         this.vanillaRecipeManager = Optional.ofNullable(vanillaRecipeManager);
     }
 
-    public void addRecipe(Identifier identifier, String recipeType, ItemStack output, HashMap<Reagent, Integer> reagents) {
+    public void addRecipe(Identifier identifier, Identifier recipeType, ItemStack output, HashMap<Reagent, Integer> reagents) {
         TRecipe recipe = new TRecipe(recipeType, output, reagents);
         recipes.put(identifier, recipe);
     }
@@ -93,12 +91,11 @@ public class TRecipeManager extends JsonDataLoader {
     /**
      * Returns a list of recipes that a passed list of item stacks can craft.
      *
-     * @param recipeTypes Recipe types to access
+     * @param recipeTypeSet Recipe types to access
      * @param itemStacks  Input item stacks
      * @return List of possible recipes
      */
-    public Set<TRecipe> getMatches(String[] recipeTypes, List<ItemStack> itemStacks) {
-        HashSet<String> recipeTypeSet = new HashSet(Arrays.asList(recipeTypes));
+    public Set<TRecipe> getMatches(Set<Identifier> recipeTypeSet, List<ItemStack> itemStacks) {
         HashMap<ComparableItemStack, Integer> input = TRecipeManager.toComparableMap(itemStacks);
         Set<TRecipe> output = new HashSet();
 
@@ -196,7 +193,7 @@ public class TRecipeManager extends JsonDataLoader {
                     loader.forEach((id, element) -> {
                         JsonObject json = element.getAsJsonObject();
 
-                        String type = json.get("type").getAsString();
+                        Identifier type = new Identifier(json.get("type").getAsString());
                         JsonObject recipeNode = json.getAsJsonObject("recipe");
 
                         JsonObject outputNode = recipeNode.getAsJsonObject("output");
@@ -281,22 +278,22 @@ public class TRecipeManager extends JsonDataLoader {
                 } else if (recipe.getOutput() == null) {
                     TCrafting.warn("Output not found for vanilla recipe, ignoring");
                 } else {
-                    String recipeType;
+                    Identifier recipeType;
 
                     if (recipe instanceof ShapedRecipe) {
                         if (((ShapedRecipe) recipe).getWidth() <= 2 && ((ShapedRecipe) recipe).getHeight() <= 2) {
-                            recipeType = RecipeType.TWO_BY_TWO;
+                            recipeType = TRecipeTypeRegistry.TWO_BY_TWO;
                         } else {
-                            recipeType = RecipeType.CRAFTING_TABLE;
+                            recipeType = TRecipeTypeRegistry.CRAFTING_TABLE;
                         }
                     } else if (recipe instanceof ShapelessRecipe) {
                         if (reagents.keySet().size() <= 4) {
-                            recipeType = RecipeType.TWO_BY_TWO;
+                            recipeType = TRecipeTypeRegistry.TWO_BY_TWO;
                         } else {
-                            recipeType = RecipeType.CRAFTING_TABLE;
+                            recipeType = TRecipeTypeRegistry.CRAFTING_TABLE;
                         }
                     } else if (recipe instanceof SmeltingRecipe) {
-                        recipeType = RecipeType.ENDERIAN_HELL_FORGE;
+                        recipeType = TRecipeTypeRegistry.SMELTING;
                     } else {
                         throw new IllegalStateException("Couldn't determine TCrafting recipe type for vanilla recipe: " + recipe);
                     }

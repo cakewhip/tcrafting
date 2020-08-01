@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:fletching_table",
+  "recipe": {
+    "output": {
+      "item": "minecraft:diamond",
+      "count": 3
+    },
+    "reagents": [
+      {
+        "item": "minecraft:dirt"
+      }
+    ]
+  }
+}

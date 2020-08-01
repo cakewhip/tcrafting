@@ -3,7 +3,6 @@ package com.kqp.tcrafting.client.screen;
 import com.kqp.tcrafting.init.TCrafting;
 import com.kqp.tcrafting.network.init.TCraftingNetwork;
 import com.kqp.tcrafting.recipe.data.Reagent;
-import com.kqp.tcrafting.recipe.data.RecipeType;
 import com.kqp.tcrafting.recipe.data.TRecipe;
 import com.kqp.tcrafting.screen.TCraftingScreenHandler;
 import com.kqp.tcrafting.screen.slot.TRecipeSlot;
@@ -15,6 +14,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -125,10 +125,12 @@ public class TCraftingScreen extends HandledScreen<TCraftingScreenHandler> {
 
         if (!available) {
             text.add(new LiteralText("Not available").formatted(Formatting.RED));
+            text.add(new LiteralText(""));
         }
 
-        if (!recipe.recipeType.equals(RecipeType.TWO_BY_TWO)) {
-            text.add(new TranslatableText("tcrafting.recipe_type.requires." + recipe.recipeType));
+        String recipeTypeKey = "tcrafting.recipe_type." + recipe.recipeType.getPath() + ".tooltip";
+        if (I18n.hasTranslation(recipeTypeKey)) {
+            text.add(new TranslatableText(recipeTypeKey));
         }
 
         text.add(new LiteralText("To Craft: "));

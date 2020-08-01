@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:cauldron",
+  "recipe": {
+    "output": {
+      "item": "minecraft:gold_ingot",
+      "count": 3
+    },
+    "reagents": [
+      {
+        "item": "minecraft:dirt"
+      }
+    ]
+  }
+}

@@ -1,12 +1,13 @@
 package com.kqp.tcrafting.screen;
 
 import com.google.common.collect.Sets;
+import com.kqp.tcrafting.api.TRecipeInterface;
+import com.kqp.tcrafting.api.TRecipeInterfaceRegistry;
+import com.kqp.tcrafting.api.TRecipeTypeRegistry;
 import com.kqp.tcrafting.client.screen.TCraftingScreen;
 import com.kqp.tcrafting.network.init.TCraftingNetwork;
 import com.kqp.tcrafting.recipe.TRecipeManager;
-import com.kqp.tcrafting.recipe.data.RecipeType;
 import com.kqp.tcrafting.recipe.data.TRecipe;
-import com.kqp.tcrafting.recipe.interf.RecipeAccessProvider;
 import com.kqp.tcrafting.screen.inventory.TCraftingRecipeLookUpInventory;
 import com.kqp.tcrafting.screen.inventory.TCraftingResultInventory;
 import com.kqp.tcrafting.screen.slot.TRecipeSlot;
@@ -19,6 +20,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -116,32 +119,28 @@ public class CraftingSession {
      * <p>
      * TODO: un-hardcode this and make the blocks implement the interface
      */
-    private String[] getAvailableRecipeTypes() {
-        Set<String> types = new HashSet<>();
+    private Set<Identifier> getAvailableRecipeTypes() {
+        Set<Identifier> types = new HashSet<>();
 
         // 2x2 recipes should always be accessible
-        types.add(RecipeType.TWO_BY_TWO);
+        types.add(TRecipeTypeRegistry.TWO_BY_TWO);
 
         // Finds blocks within a 6x3x6 box
         for (int x = -3; x < 4; x++) {
             for (int z = -3; z < 4; z++) {
                 for (int y = -1; y < 3; y++) {
                     Block block = player.world.getBlockState(player.getBlockPos().add(x, y, z)).getBlock();
+                    Identifier blockId = Registry.BLOCK.getId(block);
+                    TRecipeInterface recipeInterf = TRecipeInterfaceRegistry.get(blockId);
 
-                    if (block instanceof RecipeAccessProvider) {
-                        types.addAll(Arrays.asList(((RecipeAccessProvider) block).getRecipeTypes()));
-                    } else if (block == Blocks.CRAFTING_TABLE) {
-                        types.add(RecipeType.CRAFTING_TABLE);
-                    } else if (block == Blocks.FURNACE) {
-                        types.add(RecipeType.FURNACE);
-                    } else if (block == Blocks.ANVIL) {
-                        types.add(RecipeType.ANVIL);
+                    if (recipeInterf != null) {
+                        types.addAll(recipeInterf);
                     }
                 }
             }
         }
 
-        return types.toArray(new String[0]);
+        return types;
     }
 
     /**

@@ -3,6 +3,7 @@ package com.kqp.tcrafting.recipe.data;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,23 +12,22 @@ import java.util.HashMap;
  * Represents a TCrafting recipe with an ItemStack result and a map of reagents to their counts.
  */
 public class TRecipe {
-    public String recipeType;
+    public Identifier recipeType;
     public ItemStack result;
     public HashMap<Reagent, Integer> reagents;
 
     /**
      * A pre-calculated map of what item stacks match with a given reagent.
-     * I consider this the secret sauce of the TCrafting recipe system.
      */
     public HashMap<ComparableItemStack, Reagent> itemStackReagentMap;
 
-    private TRecipe(String recipeType) {
+    private TRecipe(Identifier recipeType) {
         this.recipeType = recipeType;
         this.reagents = new HashMap();
         this.itemStackReagentMap = new HashMap();
     }
 
-    public TRecipe(String recipeType, ItemStack result, HashMap<Reagent, Integer> reagents) {
+    public TRecipe(Identifier recipeType, ItemStack result, HashMap<Reagent, Integer> reagents) {
         this(recipeType);
 
         this.result = result;
@@ -109,7 +109,7 @@ public class TRecipe {
     }
 
     public void writeTo(PacketByteBuf buf) {
-        buf.writeString(recipeType);
+        buf.writeIdentifier(recipeType);
         buf.writeItemStack(result);
         buf.writeInt(reagents.size());
 
@@ -124,7 +124,7 @@ public class TRecipe {
     }
 
     public static TRecipe readFrom(PacketByteBuf buf) {
-        String recipeType = buf.readString();
+        Identifier recipeType = buf.readIdentifier();
         ItemStack resultStack = buf.readItemStack();
         HashMap<Reagent, Integer> reagents = new HashMap();
         int nReagents = buf.readInt();

@@ -1,5 +1,7 @@
 package com.kqp.tcrafting.init;
 
+import com.kqp.tcrafting.api.TRecipeInterfaceRegistry;
+import com.kqp.tcrafting.api.TRecipeTypeRegistry;
 import com.kqp.tcrafting.network.init.TCraftingNetwork;
 import com.kqp.tcrafting.screen.TCraftingScreenHandler;
 import net.fabricmc.api.ModInitializer;
@@ -22,6 +24,9 @@ public class TCrafting implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        TRecipeTypeRegistry.init();
+        TRecipeInterfaceRegistry.init();
+
         TCraftingNetwork.init();
     }
 
