@@ -129,7 +129,7 @@ public class TCraftingScreen extends HandledScreen<TCraftingScreenHandler> {
             text.add(new LiteralText(""));
         }
 
-        String recipeTypeKey = "tcrafting.recipe_type." + recipe.recipeType.getPath() + ".tooltip";
+        String recipeTypeKey = recipe.recipeType.getNamespace() + ".recipe_type." + recipe.recipeType.getPath() + ".tooltip";
         if (I18n.hasTranslation(recipeTypeKey)) {
             text.add(new TranslatableText(recipeTypeKey));
         }
