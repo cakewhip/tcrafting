@@ -36,8 +36,8 @@ Any technical JSON files in the "tcrafting_recipes" data folder (ie data/mod_id/
 ```
 Note that the ``count`` property is optional (defaults to 1).
 
-A couple reason to to register recipes as TCrafting recipes instead of vanilla recipes:
+Reasons to register recipes as TCrafting recipes instead of vanilla recipes:
 * Set a custom recipe type
 * Bypass the item count restrictions imposed by a 3x3 grid
 
-Other than that, feel free to continue using vanilla recipes.
+Other than that, feel free to continue using vanilla recipes as TCrafting will automatically convert all vanilla recipes.
