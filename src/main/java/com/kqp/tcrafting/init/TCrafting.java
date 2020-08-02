@@ -4,6 +4,8 @@ import com.kqp.tcrafting.api.TRecipeInterfaceRegistry;
 import com.kqp.tcrafting.api.TRecipeTypeRegistry;
 import com.kqp.tcrafting.network.init.TCraftingNetwork;
 import com.kqp.tcrafting.screen.TCraftingScreenHandler;
+import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
+import me.sargunvohra.mcmods.autoconfig1u.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType;
@@ -24,6 +26,7 @@ public class TCrafting implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        AutoConfig.register(TCraftingConfig.class, JanksonConfigSerializer::new);
         TRecipeTypeRegistry.init();
         TRecipeInterfaceRegistry.init();
 
@@ -44,5 +47,9 @@ public class TCrafting implements ModInitializer {
 
     public static void error(String message) {
         LOGGER.log(Level.ERROR, "[" + MOD_NAME + "] " + message);
+    }
+
+    public static TCraftingConfig getConfig() {
+        return AutoConfig.getConfigHolder(TCraftingConfig.class).getConfig();
     }
 }

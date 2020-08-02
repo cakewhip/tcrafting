@@ -1,12 +1,16 @@
 package com.kqp.tcrafting.api;
 
+import com.kqp.tcrafting.init.TCrafting;
+import com.kqp.tcrafting.init.TCraftingConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TRecipeInterfaceRegistry {
     private static final Map<Identifier, TRecipeInterface> RECIPE_INTERFACES = new HashMap();
@@ -41,6 +45,23 @@ public class TRecipeInterfaceRegistry {
     }
     
     public static TRecipeInterface get(Identifier id) {
-        return RECIPE_INTERFACES.get(id);
+        if (RECIPE_INTERFACES.containsKey(id)) {
+            return RECIPE_INTERFACES.get(id);
+        }
+
+        TCraftingConfig config = TCrafting.getConfig();
+        Map<Identifier, TRecipeInterface> configInterfs = new HashMap();
+
+        config.recipeInterfaces.forEach((interfId, types) -> {
+            TRecipeInterface interf = new TRecipeInterface();
+
+            for (String type : types) {
+                interf.add(new Identifier(type));
+            }
+
+            configInterfs.put(new Identifier(interfId), interf);
+        });
+
+        return configInterfs.get(id);
     }
 }

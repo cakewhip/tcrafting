@@ -1,6 +1,7 @@
 plugins {
 	id 'fabric-loom' version '0.4-SNAPSHOT'
 	id 'maven-publish'
+	id "com.wynprice.cursemaven" version "2.1.5"
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -15,6 +16,10 @@ repositories {
 		name = "Modmuss50"
 		url = "https://maven.modmuss50.me/"
 	}
+
+	maven {
+		url "http://server.bbkr.space:8081/artifactory/libs-release"
+	}
 }
 
 dependencies {
@@ -25,6 +30,9 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	// Cloth Config
+	compile "curse.maven:autoconfig:${project.autoconfig_version}"
 
 	// Testing
 	// modImplementation "TechReborn:TechReborn-1.16:3.4.5+build.88"
