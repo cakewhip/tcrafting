@@ -32,7 +32,9 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	// Cloth Config
-	compile "curse.maven:autoconfig:${project.autoconfig_version}"
+	modImplementation "curse.maven:autoconfig:${project.autoconfig_version}"
+	modRuntime "curse.maven:autoconfig:${project.autoconfig_version}"
+	include "curse.maven:autoconfig:${project.autoconfig_version}"
 
 	// Testing
 	// modImplementation "TechReborn:TechReborn-1.16:3.4.5+build.88"
