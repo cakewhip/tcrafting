@@ -1,5 +1,6 @@
 package com.kqp.tcrafting.client.screen;
 
+import com.kqp.inventorytabs.tabs.TabManager;
 import com.kqp.tcrafting.init.TCrafting;
 import com.kqp.tcrafting.init.TCraftingClient;
 import com.kqp.tcrafting.network.init.TCraftingNetwork;
@@ -16,6 +17,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -52,24 +54,28 @@ public class TCraftingScreen extends HandledScreen<TCraftingScreenHandler> {
      */
     public float lookUpScrollPosition = 0.0F;
 
+    private final TabManager tabManager;
+
     public TCraftingScreen(TCraftingScreenHandler screenHandler, PlayerInventory playerInventory) {
         super(screenHandler, playerInventory, new TranslatableText(TITLE_TRANSLATION_KEY));
         this.backgroundWidth = 256;
         this.backgroundHeight = 166;
         this.passEvents = false;
 
+        this.tabManager = TabManager.getInstance();
+
         TCraftingNetwork.REQUEST_CRAFTING_SESSION_SYNC_C2S.sendEmptyToServer();
         syncCraftingResultScrollbar();
     }
 
-    /**
-     * Overriden to render the tooltips for the tabs.
-     *
-     * @param matrices
-     * @param mouseX
-     * @param mouseY
-     * @param delta
-     */
+    @Override
+    protected void init() {
+        super.init();
+
+        tabManager.onScreenOpen(this);
+        tabManager.onOpenTab(tabManager.tabs.get(1));
+    }
+
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         this.renderBackground(matrices);
@@ -77,16 +83,7 @@ public class TCraftingScreen extends HandledScreen<TCraftingScreenHandler> {
         super.render(matrices, mouseX, mouseY, delta);
         this.drawMouseoverTooltip(matrices, mouseX, mouseY);
 
-        double aX = mouseX - this.x;
-        double aY = mouseY - this.y;
-
-        if (aY > -24 && aY < 0) {
-            if (aX > 0 && aX < 28) {
-                this.renderTooltip(matrices, Arrays.asList(new LiteralText("Player")), mouseX, mouseY);
-            } else if (aX > 29 && aX < 57) {
-                this.renderTooltip(matrices, Arrays.asList(new LiteralText("Crafting")), mouseX, mouseY);
-            }
-        }
+        tabManager.tabRenderer.renderForeground(matrices, mouseX, mouseY);
     }
 
     /**
@@ -156,32 +153,19 @@ public class TCraftingScreen extends HandledScreen<TCraftingScreenHandler> {
 
     @Override
     protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
+        tabManager.tabRenderer.renderBackground(matrices);
+
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         int i = (this.width - this.backgroundWidth) / 2;
         int j = (this.height - this.backgroundHeight) / 2;
 
         MinecraftClient.getInstance().getTextureManager().bindTexture(TEXTURE);
 
-        this.drawTexture(matrices, i, j - 28, 0, 166, 28, 32);
-
-        this.drawTexture(matrices, i, j, 0, 0, 176, 166);
-
-        this.drawTexture(matrices, i + 176 + 2, j, 178, 0, 78, 166);
+        this.drawTexture(matrices, i, j, 0, 0, 256, 166);
 
         this.drawTexture(matrices, i + 156, j + 18 + (int) ((float) (52 - 15) * this.craftingScrollPosition), 56 + (this.hasOutputsScrollbar() ? 0 : 12), 166, 12, 15);
 
         this.drawTexture(matrices, i + 242, j + 48 + (int) ((float) (106 - 11) * this.lookUpScrollPosition), 80 + (this.hasRecipeLookUpScrollbar() ? 0 : 6), 166, 6, 11);
-
-        this.drawTexture(matrices, i + 29, j - 28, 28, 198, 28, 32);
-
-        this.setZOffset(100);
-        this.itemRenderer.zOffset = 100.0F;
-        RenderSystem.enableRescaleNormal();
-        ItemStack itemStack = new ItemStack(Blocks.CRAFTING_TABLE);
-        this.itemRenderer.renderGuiItemIcon(itemStack, this.x + 29 + (28 - 15) / 2, this.y - 28 + 10);
-        this.itemRenderer.renderGuiItemOverlay(this.textRenderer, itemStack, this.x + 29 + (28 - 15) / 2, this.y - 28 + 10);
-        this.itemRenderer.zOffset = 0.0F;
-        this.setZOffset(0);
     }
 
     private void renderAvailabilities(MatrixStack matrices) {
@@ -257,16 +241,8 @@ public class TCraftingScreen extends HandledScreen<TCraftingScreenHandler> {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0) {
-            double aX = mouseX - this.x;
-            double aY = mouseY - this.y;
-
-            if (aX > 0 && aX < 28) {
-                if (aY > -32 && aY < 0) {
-                    ClientPlayerEntity player = (ClientPlayerEntity) playerInventory.player;
-                    MinecraftClient.getInstance().openScreen(new InventoryScreen(player));
-                }
-            }
+        if (tabManager.mouseClicked(mouseX, mouseY, button)) {
+            return true;
         }
 
         return super.mouseClicked(mouseX, mouseY, button);

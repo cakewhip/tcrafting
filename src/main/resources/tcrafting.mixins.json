@@ -13,7 +13,6 @@
     "screen.PlayerInventoryListener"
   ],
   "client": [
-    "client.gui.NavigationTabAdder",
     "client.recipe.TClientRecipeManagerInitializer"
   ],
   "injectors": {

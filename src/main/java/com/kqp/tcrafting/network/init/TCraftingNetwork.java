@@ -2,7 +2,6 @@ package com.kqp.tcrafting.network.init;
 
 import com.kqp.tcrafting.network.base.BasePacketC2S;
 import com.kqp.tcrafting.network.recipe.SyncRecipeManagerS2C;
-import com.kqp.tcrafting.network.screen.MoveMouseS2C;
 import com.kqp.tcrafting.network.screen.crafting.*;
 import com.kqp.tcrafting.network.screen.navigation.OpenCraftingC2S;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
@@ -20,8 +19,6 @@ public class TCraftingNetwork {
     public static final SyncScrollPositionC2S SYNC_SCROLL_POSITION_C2S = new SyncScrollPositionC2S();
 
     public static final RequestCraftingSessionSyncC2S REQUEST_CRAFTING_SESSION_SYNC_C2S = new RequestCraftingSessionSyncC2S();
-
-    public static final MoveMouseS2C MOVE_MOUSE_S2C = new MoveMouseS2C();
 
     public static void init() {
         register(OPEN_CRAFTING_C2S);

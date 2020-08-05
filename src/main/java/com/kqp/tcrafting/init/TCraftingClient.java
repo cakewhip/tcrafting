@@ -1,9 +1,11 @@
 package com.kqp.tcrafting.init;
 
+import com.kqp.inventorytabs.api.TabProviderRegistry;
 import com.kqp.tcrafting.client.screen.TCraftingScreen;
 import com.kqp.tcrafting.network.init.TCraftingClientNetwork;
 import com.kqp.tcrafting.network.init.TCraftingNetwork;
 import com.kqp.tcrafting.screen.TCraftingScreenHandler;
+import com.kqp.tcrafting.tab.CraftingScreenTabProvider;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -37,17 +39,19 @@ public class TCraftingClient implements ClientModInitializer {
             if (client.world != null && client.player != null) {
                 if (client.overlay == null && (client.currentScreen == null || client.currentScreen.passEvents)) {
                     if (OPEN_CRAFTING_SCREEN_KEY_BIND.wasPressed()) {
-                        triggerOpenCraftingMenu(false);
+                        triggerOpenCraftingMenu();
                     }
                 }
             }
         });
+
+        TabProviderRegistry.register(TCrafting.id("crafting_screen_tab_provider"), new CraftingScreenTabProvider());
     }
 
     /**
      * Begins the process of opening the crafting menu from the inventory screen.
      */
-    public static void triggerOpenCraftingMenu(boolean moveMouse) {
-        TCraftingNetwork.OPEN_CRAFTING_C2S.send(moveMouse);
+    public static void triggerOpenCraftingMenu() {
+        TCraftingNetwork.OPEN_CRAFTING_C2S.sendEmptyToServer();
     }
 }

@@ -20,6 +20,8 @@ repositories {
 	maven {
 		url "http://server.bbkr.space:8081/artifactory/libs-release"
 	}
+
+	mavenLocal()
 }
 
 dependencies {
@@ -31,10 +33,14 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	// Cloth Config
+	// Auto Config
 	modImplementation "curse.maven:autoconfig:${project.autoconfig_version}"
 	modRuntime "curse.maven:autoconfig:${project.autoconfig_version}"
 	include "curse.maven:autoconfig:${project.autoconfig_version}"
+
+	// Inventory Tabs
+	modImplementation "com.kqp:inventorytabs:${project.inventorytabs_version}"
+	modRuntime "com.kqp:inventorytabs:${project.inventorytabs_version}"
 
 	// Testing
 	// modImplementation "TechReborn:TechReborn-1.16:3.4.5+build.88"
