@@ -39,10 +39,12 @@ public class SyncRecipeSlotS2C extends BasePacketS2C {
 
     @Environment(EnvType.CLIENT)
     private static void syncClientRecipeSlot(int slotIndex, ItemStack itemStack, int recipeIndex) {
-        TCraftingScreenHandler screenHandler = ((TCraftingScreen) MinecraftClient.getInstance().currentScreen).getScreenHandler();
-        TRecipeSlot recipeSlot = (TRecipeSlot) screenHandler.getSlot(slotIndex);
+        if (MinecraftClient.getInstance().currentScreen instanceof TCraftingScreen) {
+            TCraftingScreenHandler screenHandler = ((TCraftingScreen) MinecraftClient.getInstance().currentScreen).getScreenHandler();
+            TRecipeSlot recipeSlot = (TRecipeSlot) screenHandler.getSlot(slotIndex);
 
-        recipeSlot.setStack(itemStack);
-        recipeSlot.recipeIndex = recipeIndex;
+            recipeSlot.setStack(itemStack);
+            recipeSlot.recipeIndex = recipeIndex;
+        }
     }
 }

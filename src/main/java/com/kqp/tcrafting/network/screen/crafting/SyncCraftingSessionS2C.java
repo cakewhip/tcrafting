@@ -43,6 +43,9 @@ public class SyncCraftingSessionS2C extends BasePacketS2C {
     @Environment(EnvType.CLIENT)
     private static void syncToClientSession(List<TRecipe> recipes, List<Boolean> recipeAvailabilities) {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
-        ((TCraftingScreenHandler) player.currentScreenHandler).craftingSession.syncFromServer(recipes, recipeAvailabilities);
+
+        if (player.currentScreenHandler instanceof TCraftingScreenHandler) {
+            ((TCraftingScreenHandler) player.currentScreenHandler).craftingSession.syncFromServer(recipes, recipeAvailabilities);
+        }
     }
 }

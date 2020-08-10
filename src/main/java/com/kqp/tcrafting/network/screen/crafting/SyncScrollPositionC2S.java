@@ -25,15 +25,17 @@ public class SyncScrollPositionC2S extends BasePacketC2S {
         context.getTaskQueue().execute(() -> {
             TCraftingScreenHandler.View view = TCraftingScreenHandler.View.from(viewOrdinal);
 
-            TCraftingScreenHandler screenHandler = (TCraftingScreenHandler) context.getPlayer().currentScreenHandler;
+            if (context.getPlayer().currentScreenHandler instanceof TCraftingScreenHandler) {
+                TCraftingScreenHandler screenHandler = (TCraftingScreenHandler) context.getPlayer().currentScreenHandler;
 
-            switch (view) {
-                case CRAFTING:
-                    screenHandler.craftingSession.scrollCraftingResults(scrollPos);
-                    break;
-                case LOOK_UP:
-                    screenHandler.craftingSession.scrollLookUpResults(scrollPos);
-                    break;
+                switch (view) {
+                    case CRAFTING:
+                        screenHandler.craftingSession.scrollCraftingResults(scrollPos);
+                        break;
+                    case LOOK_UP:
+                        screenHandler.craftingSession.scrollLookUpResults(scrollPos);
+                        break;
+                }
             }
         });
     }

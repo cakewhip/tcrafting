@@ -33,20 +33,22 @@ public class RequestScrollPositionS2C extends BasePacketS2C {
 
     @Environment(EnvType.CLIENT)
     private static void respondToRequest(int viewOrdinal) {
-        TCraftingScreenHandler.View view = TCraftingScreenHandler.View.from(viewOrdinal);
-        float scrollPos = 0F;
+        if (MinecraftClient.getInstance().currentScreen instanceof TCraftingScreen) {
+            TCraftingScreenHandler.View view = TCraftingScreenHandler.View.from(viewOrdinal);
+            float scrollPos = 0F;
 
-        TCraftingScreen screen = (TCraftingScreen) MinecraftClient.getInstance().currentScreen;
+            TCraftingScreen screen = (TCraftingScreen) MinecraftClient.getInstance().currentScreen;
 
-        switch (view) {
-            case CRAFTING:
-                scrollPos = screen.craftingScrollPosition;
-                break;
-            case LOOK_UP:
-                scrollPos = screen.lookUpScrollPosition;
-                break;
+            switch (view) {
+                case CRAFTING:
+                    scrollPos = screen.craftingScrollPosition;
+                    break;
+                case LOOK_UP:
+                    scrollPos = screen.lookUpScrollPosition;
+                    break;
+            }
+
+            TCraftingNetwork.SYNC_SCROLL_POSITION_C2S.sendToServer(view, scrollPos);
         }
-
-        TCraftingNetwork.SYNC_SCROLL_POSITION_C2S.sendToServer(view, scrollPos);
     }
 }

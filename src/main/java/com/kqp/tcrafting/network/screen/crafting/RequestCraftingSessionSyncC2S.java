@@ -13,9 +13,11 @@ public class RequestCraftingSessionSyncC2S extends BasePacketC2S {
     @Override
     public void accept(PacketContext context, PacketByteBuf data) {
         context.getTaskQueue().execute(() -> {
-            TCraftingScreenHandler screenHandler = (TCraftingScreenHandler) context.getPlayer().currentScreenHandler;
+            if (context.getPlayer().currentScreenHandler instanceof TCraftingScreenHandler) {
+                TCraftingScreenHandler screenHandler = (TCraftingScreenHandler) context.getPlayer().currentScreenHandler;
 
-            screenHandler.craftingSession.syncToPlayer();
+                screenHandler.craftingSession.syncToPlayer();
+            }
         });
     }
 }
