@@ -11,11 +11,10 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-import java.util.HashMap;
 import java.util.Map;
 
-public class SyncRecipeManagerS2C extends BasePacketS2C {
-    public SyncRecipeManagerS2C() {
+public class PrepRecipeManagerForLoadingS2C extends BasePacketS2C {
+    public PrepRecipeManagerForLoadingS2C() {
         super("sync_recipe_manager_s2c");
     }
 
@@ -24,35 +23,21 @@ public class SyncRecipeManagerS2C extends BasePacketS2C {
 
         this.sendToPlayer(player, buf -> {
             buf.writeInt(recipes.size());
-
-            for (Map.Entry<Identifier, TRecipe> entry : recipes.entrySet()) {
-                buf.writeIdentifier(entry.getKey());
-                entry.getValue().writeTo(buf);
-            }
         });
     }
 
     @Override
     public void accept(PacketContext context, PacketByteBuf data) {
-        Map<Identifier, TRecipe> recipes = new HashMap();
-        int size = data.readInt();
-
-        for (int i = 0; i < size; i++) {
-            Identifier id = data.readIdentifier();
-            TRecipe recipe = TRecipe.readFrom(data);
-
-            recipes.put(id, recipe);
-        }
+        int expectedSize = data.readInt();
 
         context.getTaskQueue().execute(() -> {
-            loadRecipesToClientRecipeManager(recipes, context.getPlayer());
+            loadRecipesToClientRecipeManager(expectedSize, context.getPlayer());
         });
     }
 
     @Environment(EnvType.CLIENT)
-    private static void loadRecipesToClientRecipeManager(Map<Identifier, TRecipe> recipes, PlayerEntity player) {
+    private static void loadRecipesToClientRecipeManager(int expectedSize, PlayerEntity player) {
         TRecipeManager tRecipeManager = TRecipeManager.getFor(player.world);
-
-        tRecipeManager.setRecipes(recipes);
+        tRecipeManager.prepareForLoading(expectedSize);
     }
 }

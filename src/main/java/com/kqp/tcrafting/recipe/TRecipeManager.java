@@ -5,12 +5,15 @@ import com.kqp.tcrafting.api.DynamicRecipeRegistry;
 import com.kqp.tcrafting.api.TRecipeTypeRegistry;
 import com.kqp.tcrafting.init.TCrafting;
 import com.kqp.tcrafting.mixin.accessor.MinecraftServerResourceAccessor;
+import com.kqp.tcrafting.network.init.TCraftingNetwork;
 import com.kqp.tcrafting.recipe.data.ComparableItemStack;
 import com.kqp.tcrafting.recipe.data.Reagent;
 import com.kqp.tcrafting.recipe.data.TRecipe;
 import com.kqp.tcrafting.recipe.interf.MatchingStackProvider;
 import com.kqp.tcrafting.recipe.interf.TRecipeManagerContainer;
 import com.kqp.tcrafting.util.TimeUtil;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -42,6 +45,9 @@ public class TRecipeManager extends JsonDataLoader {
     private final Optional<RecipeManager> vanillaRecipeManager;
 
     private final Map<Set<ComparableItemStack>, String> knownTags = new HashMap();
+
+    @Environment(EnvType.CLIENT)
+    private int expectedSize;
 
     /**
      * Creates the recipe manager.
@@ -142,10 +148,6 @@ public class TRecipeManager extends JsonDataLoader {
         output.sort(Comparator.comparing(TRecipe::getSortString));
 
         return output;
-    }
-
-    public void setRecipes(Map<Identifier, TRecipe> recipes) {
-        this.recipes = recipes;
     }
 
     public Map<Identifier, TRecipe> getRecipes() {
@@ -346,6 +348,29 @@ public class TRecipeManager extends JsonDataLoader {
     private void checkIfKnownReagent(Reagent reagent) {
         if (knownTags.containsKey(reagent.matchingStacks)) {
             reagent.setCustomTooltipKey(knownTags.get(reagent.matchingStacks));
+        }
+    }
+
+    public void prepareForLoading(int expectedSize) {
+        this.expectedSize = expectedSize;
+        this.recipes.clear();
+
+        TCrafting.info("Preparing to load recipes from server");
+        TCrafting.info("Expecting " + expectedSize + " recipes");
+
+        TCraftingNetwork.REQUEST_RECIPES_C2S.sendEmptyToServer();
+    }
+
+    @Environment(EnvType.CLIENT)
+    public void addRecipes(Map<Identifier, TRecipe> recipes, boolean done) {
+        this.recipes.putAll(recipes);
+
+        if (this.recipes.size() == expectedSize) {
+            TCrafting.info("Finished loading " + this.recipes.size() + " recipes from server");
+        } else if (this.recipes.size() > expectedSize) {
+            throw new RuntimeException("Received too many recipes! Something's wrong, I can feel it");
+        } else if (this.recipes.size() < expectedSize && done) {
+            throw new RuntimeException("Didn't receive enough recipes! Prepare for unforeseen consequences");
         }
     }
 

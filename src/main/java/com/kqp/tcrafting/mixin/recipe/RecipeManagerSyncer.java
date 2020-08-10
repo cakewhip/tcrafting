@@ -18,6 +18,6 @@ public class RecipeManagerSyncer {
     @Inject(method = "onPlayerConnect", at = @At("RETURN"))
     public void onPlayerConnect(ClientConnection connection, ServerPlayerEntity player, CallbackInfo callbackInfo) {
         TRecipeManager tRecipeManager = TRecipeManager.getFor(player.world);
-        TCraftingNetwork.SYNC_RECIPE_MANAGER_S2C.sendToPlayer(player, tRecipeManager);
+        TCraftingNetwork.PREP_RECIPE_MANAGER_FOR_LOADING_S2C.sendToPlayer(player, tRecipeManager);
     }
 }
