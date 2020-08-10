@@ -84,6 +84,7 @@ public class TCraftingScreen extends HandledScreen<TCraftingScreenHandler> {
         this.drawMouseoverTooltip(matrices, mouseX, mouseY);
 
         tabManager.tabRenderer.renderForeground(matrices, mouseX, mouseY);
+        tabManager.tabRenderer.renderHoverTooltips(matrices, mouseX, mouseY);
     }
 
     /**
@@ -253,6 +254,8 @@ public class TCraftingScreen extends HandledScreen<TCraftingScreenHandler> {
         if (TCraftingClient.OPEN_CRAFTING_SCREEN_KEY_BIND.matchesKey(keyCode, scanCode)) {
             this.client.player.closeHandledScreen();
 
+            return true;
+        } else if (tabManager.keyPressed(keyCode, scanCode, modifiers)) {
             return true;
         }
 

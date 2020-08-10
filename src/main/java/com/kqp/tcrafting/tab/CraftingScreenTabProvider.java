@@ -8,9 +8,15 @@ import java.util.List;
 
 public class CraftingScreenTabProvider implements TabProvider {
     @Override
-    public void addAvailableTabs(ClientPlayerEntity clientPlayerEntity, List<Tab> list) {
-        if (list.size() == 1 || !(list.get(1) instanceof CraftingScreenTab)) {
-            list.add(1, new CraftingScreenTab());
+    public void addAvailableTabs(ClientPlayerEntity player, List<Tab> tabs) {
+        for (int i = 0; i < tabs.size(); ++i) {
+            Tab tab = tabs.get(i);
+
+            if (tab instanceof CraftingScreenTab) {
+                return;
+            }
         }
+
+        tabs.add(new CraftingScreenTab());
     }
 }

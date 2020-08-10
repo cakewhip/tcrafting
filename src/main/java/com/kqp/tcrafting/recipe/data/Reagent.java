@@ -71,7 +71,7 @@ public class Reagent {
 
     @Environment(EnvType.CLIENT)
     public String getTooltip() {
-        if (customTooltipKey != null && !customTooltipKey.isEmpty()) {
+        if (customTooltipKey != null && !customTooltipKey.isEmpty() && I18n.hasTranslation(customTooltipKey)) {
             return I18n.translate(customTooltipKey);
         }
 
