@@ -5,7 +5,7 @@ import com.kqp.tcrafting.init.TCrafting;
 import com.kqp.tcrafting.init.TCraftingClient;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.StringRenderable;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Util;
 
@@ -26,7 +26,7 @@ public class CraftingScreenTab implements Tab {
     }
 
     @Override
-    public StringRenderable getHoverText() {
+    public Text getHoverText() {
         return new TranslatableText(Util.createTranslationKey("gui", TCrafting.id("crafting")));
     }
 

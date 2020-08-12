@@ -1,5 +1,6 @@
 package com.kqp.tcrafting.client.screen;
 
+import com.google.common.collect.Lists;
 import com.kqp.inventorytabs.tabs.TabManager;
 import com.kqp.tcrafting.init.TCrafting;
 import com.kqp.tcrafting.init.TCraftingClient;
@@ -24,7 +25,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.StringRenderable;
+import net.minecraft.text.OrderedText;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -97,8 +99,8 @@ public class TCraftingScreen extends HandledScreen<TCraftingScreenHandler> {
      */
     @Override
     protected void renderTooltip(MatrixStack matrices, ItemStack stack, int x, int y) {
-        List<StringRenderable> text = new ArrayList();
-        text.addAll(this.getTooltipFromItem(stack));
+        List<OrderedText> text = new ArrayList();
+        text.addAll(Lists.transform(this.getTooltipFromItem(stack), Text::asOrderedText));
 
         if (this.focusedSlot instanceof TRecipeSlot) {
             TRecipeSlot recipeSlot = (TRecipeSlot) this.focusedSlot;
@@ -116,28 +118,28 @@ public class TCraftingScreen extends HandledScreen<TCraftingScreenHandler> {
             }
         }
 
-        this.renderTooltip(matrices, text, x, y);
+        this.renderOrderedTooltip(matrices, text, x, y);
     }
 
-    private void addRecipeTooltip(TRecipe recipe, List<StringRenderable> text, boolean available) {
-        text.add(new LiteralText(""));
+    private void addRecipeTooltip(TRecipe recipe, List<OrderedText> text, boolean available) {
+        text.add(new LiteralText("").asOrderedText());
 
         if (!available) {
-            text.add(new LiteralText("Not available").formatted(Formatting.RED));
-            text.add(new LiteralText(""));
+            text.add(new LiteralText("Not available").formatted(Formatting.RED).asOrderedText());
+            text.add(new LiteralText("").asOrderedText());
         }
 
         String recipeTypeKey = recipe.recipeType.getNamespace() + ".recipe_type." + recipe.recipeType.getPath() + ".tooltip";
         if (I18n.hasTranslation(recipeTypeKey)) {
-            text.add(new TranslatableText(recipeTypeKey));
+            text.add(new TranslatableText(recipeTypeKey).asOrderedText());
         }
 
-        text.add(new LiteralText("To Craft: "));
+        text.add(new LiteralText("To Craft: ").asOrderedText());
         for (Reagent reagent : recipe.reagents.keySet()) {
             String reagentLine = recipe.reagents.get(reagent) + " x " + reagent.getTooltip();
-            List<StringRenderable> split = this.textRenderer.wrapLines(new LiteralText(reagentLine), 126);
+            List<OrderedText> split = this.textRenderer.wrapLines(new LiteralText(reagentLine), 126);
 
-            for (StringRenderable splitLine : split) {
+            for (OrderedText splitLine : split) {
                 text.add(splitLine);
             }
         }
