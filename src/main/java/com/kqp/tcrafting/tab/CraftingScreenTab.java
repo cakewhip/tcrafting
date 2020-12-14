@@ -5,11 +5,15 @@ import com.kqp.tcrafting.init.TCrafting;
 import com.kqp.tcrafting.init.TCraftingClient;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.StringRenderable;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Util;
 
-public class CraftingScreenTab implements Tab {
+public class CraftingScreenTab extends Tab {
+    protected CraftingScreenTab() {
+        super(new ItemStack(Blocks.CRAFTING_TABLE));
+    }
+
     @Override
     public void open() {
         TCraftingClient.triggerOpenCraftingMenu();
@@ -21,12 +25,7 @@ public class CraftingScreenTab implements Tab {
     }
 
     @Override
-    public ItemStack getItemStack() {
-        return new ItemStack(Blocks.CRAFTING_TABLE);
-    }
-
-    @Override
-    public StringRenderable getHoverText() {
+    public Text getHoverText() {
         return new TranslatableText(Util.createTranslationKey("gui", TCrafting.id("crafting")));
     }
 

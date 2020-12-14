@@ -3,8 +3,7 @@ package com.kqp.tcrafting.mixin.recipe;
 import com.kqp.tcrafting.recipe.TRecipeManager;
 import com.kqp.tcrafting.recipe.interf.TRecipeManagerContainer;
 import net.minecraft.resource.ServerResourceManager;
-import net.minecraft.tag.RegistryTagContainer;
-import net.minecraft.tag.RegistryTagManager;
+import net.minecraft.tag.TagManagerLoader;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -16,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class KnownTagConverter {
     @Shadow
     @Final
-    private RegistryTagManager registryTagManager;
+    private TagManagerLoader registryTagManager;
 
     @Inject(
             method = "loadRegistryTags",
@@ -26,7 +25,7 @@ public class KnownTagConverter {
         TRecipeManager tRecipeManager = ((TRecipeManagerContainer) this).getTCraftingRecipeManager();
 
         tRecipeManager.clearKnownTags();
-        registryTagManager.items().getEntries().forEach(tRecipeManager::loadTag);
+        registryTagManager.getTagManager().getItems().getTags().forEach(tRecipeManager::loadTag);
         tRecipeManager.identifyKnownTags();
     }
 }
